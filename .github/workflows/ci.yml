@@ -53,8 +53,9 @@ jobs:
     needs: tests
     if: startsWith(github.ref, 'refs/tags/')
 
-    name: "Deploy"
+    name: Publish to PyPI
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - uses: actions/checkout@v3
 
@@ -65,6 +66,9 @@ jobs:
           architecture: x64
           version: 2.7.0
 
-      - name: Publish
+      - name: Build package distributions
         run: |
-          pdm publish --username __token__ --password ${{ secrets.PYPI_API_TOKEN }} --verbose
+          pdm build
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
