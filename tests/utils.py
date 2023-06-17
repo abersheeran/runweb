@@ -16,6 +16,7 @@ def run_command(command: str) -> Generator[str, None, None]:
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            creationflags=0 if os.name != "nt" else subprocess.CREATE_NEW_PROCESS_GROUP,
         )
         time.sleep(1)
         if process.poll() is None:
