@@ -1,3 +1,5 @@
+from typing import Union
+
 import click
 
 from .parse import parse_application
@@ -68,12 +70,12 @@ else:
 @click.pass_context
 def cli(
     ctx: click.Context,
-    server_name: str | None,
-    interface: str | None,
+    server_name: Union[str, None],
+    interface: Union[str, None],
     application: str,
     bind_address: str,
     autoreload: bool,
-    workers_num: int | None,
+    workers_num: Union[int, None],
 ) -> None:
     if ctx.invoked_subcommand is not None:
         return
