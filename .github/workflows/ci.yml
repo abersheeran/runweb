@@ -41,7 +41,7 @@ jobs:
           version: 2.7.0
       - name: Install dependencies
         run: |
-          pdm sync -v -dG dev -dG test
+          pdm sync -v
 
       - name: Static type and format checking
         run: pdm run check
