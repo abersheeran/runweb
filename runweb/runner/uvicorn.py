@@ -1,9 +1,7 @@
-from __future__ import annotations
-
 import multiprocessing
 import socket
 
-from typing import Any
+from typing import Any, Union
 
 from uvicorn import Server, Config
 
@@ -19,11 +17,7 @@ def singleprocess(application: Any, bind: socket.socket) -> None:
     server.run([bind])
 
 
-def asgi(
-    bind_address: str,
-    application: str,
-    workers_num: int | None,
-) -> None:
+def asgi(bind_address: str, application: str, workers_num: Union[int, None]) -> None:
     callback = parse_application(application)
     bind_socket = parse_bind(bind_address)
 
