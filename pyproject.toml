@@ -1,0 +1,51 @@
+[project]
+authors = [{ name = "abersheeran", email = "me@abersheeran.com" }]
+dependencies = [
+    "click>=8.1.3",
+]
+description = "Run web server with one command."
+dynamic = ["version"]
+license = { text = "Apache-2.0" }
+name = "runweb"
+readme = "README.md"
+requires-python = ">=3.7"
+
+[project.optional-dependencies]
+tui = [
+    "trogon>=0.4.0",
+]
+waitress = [
+    "waitress",
+]
+reload = [
+    "hupper>=1.12",
+]
+uvicorn = [
+    "wsproto",
+    "httptools",
+    "uvloop; sys_platform != 'win32' and sys_platform != 'cygwin' and platform_python_implementation != 'PyPy'",
+    "uvicorn",
+]
+
+[project.scripts]
+runweb = "runweb.main:cli"
+
+[tool.pdm]
+version = { source = "file", path = "runweb/__version__.py" }
+
+[tool.pdm.dev-dependencies]
+dev = ["ruff>=0.0.272"]
+test = [
+    "pytest>=7.3.2",
+    "httpx>=0.24.1",
+]
+
+[tool.pdm.scripts]
+check = { shell = "ruff check ." }
+lint = { shell = "ruff --fix ." }
+test = { shell = "pytest tests" }
+push-tag = { shell = "git add runweb/__version__.py && git commit -m v`pdm show --version` && git tag v`pdm show --version` && git push --tags" }
+
+[build-system]
+build-backend = "pdm.backend"
+requires = ["pdm-backend"]

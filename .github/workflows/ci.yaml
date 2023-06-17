@@ -1,0 +1,70 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "*"
+    paths:
+      - ".github/workflows/ci.yml"
+      - "**.py"
+      - "pdm.lock"
+      - "pyproject.toml"
+      - "!runweb/__version__.py"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ci.yml"
+      - "**.py"
+      - "pdm.lock"
+      - "pyproject.toml"
+      - "!runweb/__version__.py"
+
+jobs:
+  tests:
+    name: "Python ${{ matrix.python-version }} ${{ matrix.os }}"
+    runs-on: "${{ matrix.os }}"
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9, "3.10", 3.11]
+        os: [windows-latest, ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pdm-project/setup-pdm@v3
+        name: Setup Python and PDM
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+          version: 2.7.0
+      - name: Install dependencies
+        run: |
+          pdm sync -v -dG dev -dG test --no-self
+
+      - name: Static type and format checking
+        run: pdm run check
+
+      - name: Tests
+        run: pdm run test
+
+  publish:
+    needs: tests
+    if: startsWith(github.ref, 'refs/tags/')
+
+    name: "Deploy"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: pdm-project/setup-pdm@v3
+        name: Setup Python and PDM
+        with:
+          python-version: "3.10"
+          architecture: x64
+          version: 2.7.0
+
+      - name: Publish
+        run: |
+          pdm publish --username __token__ --password ${{ secrets.PYPI_API_TOKEN }} --verbose
