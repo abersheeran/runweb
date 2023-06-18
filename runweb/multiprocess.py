@@ -21,7 +21,9 @@ def multiprocess(workers_num: int, create_process: Callable[[], SpawnProcess]) -
 
     for sig in (
         signal.SIGINT,  # Sent by Ctrl+C.
-        signal.SIGTERM,  # Sent by `kill <pid>`.
+        signal.SIGTERM  # Sent by `kill <pid>`. Not sent on Windows.
+        if os.name != "nt"
+        else signal.SIGBREAK,  # Sent by `Ctrl+Break` on Windows.
     ):
         signal.signal(sig, lambda sig, frame: should_exit.set())
 
