@@ -1,5 +1,4 @@
 import multiprocessing
-import socket
 
 from typing import Any, Union
 
@@ -11,21 +10,19 @@ from ..multiprocess import multiprocess
 spawn = multiprocessing.get_context("spawn")
 
 
-def singleprocess(application: Any, bind: socket.socket) -> None:
-    server = create_server(application, sockets=[bind])
+def singleprocess(application: Any, bind_address: str) -> None:
+    server = create_server(application, sockets=[parse_bind(bind_address)])
     server.run()
 
 
 def wsgi(bind_address: str, application: str, workers_num: Union[int, None]) -> None:
     callback = parse_application(application)
-    bind_socket = parse_bind(bind_address)
+    parse_bind(bind_address).close()
 
     if workers_num is None:
-        singleprocess(callback, bind_socket)
+        singleprocess(callback, bind_address)
     else:
-
-        def create_process():
-            process = spawn.Process(target=singleprocess, args=(callback, bind_socket))
-            return process
-
-        multiprocess(workers_num, create_process)
+        multiprocess(
+            workers_num,
+            lambda: spawn.Process(target=singleprocess, args=(callback, bind_address)),
+        )
