@@ -35,7 +35,10 @@ def parse_bind(value) -> socket.socket:
     sock = socket.socket(
         socket.AF_INET if address.version == 4 else socket.AF_INET6, socket.SOCK_STREAM
     )
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+    if os.name != "nt":
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+    else:  # In windows, SO_REUSEPORT is not available
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind((str(address), port))
     return sock
 
