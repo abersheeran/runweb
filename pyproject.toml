@@ -44,7 +44,7 @@ test = [
 check = { shell = "ruff check ." }
 lint = { shell = "ruff --fix ." }
 test = { shell = "pytest tests" }
-push-tag = { shell = "git add runweb/__version__.py && git commit -m v`pdm show --version` && git tag v`pdm show --version` && git push --tags" }
+push-tag = { shell = "git add runweb/__version__.py && git commit -m v`pdm show --version` && git tag v`pdm show --version` && git push && git push --tags" }
 
 [build-system]
 build-backend = "pdm.backend"
