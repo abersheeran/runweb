@@ -8,7 +8,7 @@ from typing import Any
 import click
 
 
-def parse_bind(value) -> socket.socket:
+def parse_bind(value: str) -> socket.socket:
     if value.startswith("unix:"):
         path = value[5:]
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -43,7 +43,7 @@ def parse_bind(value) -> socket.socket:
     return sock
 
 
-def parse_application(value) -> Any:
+def parse_application(value: str) -> Any:
     module_str, _, attrs_str = value.partition(":")
     if not module_str or not attrs_str:
         message = (
