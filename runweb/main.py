@@ -83,9 +83,11 @@ def cli(
     if application is None:
         raise click.UsageError("Missing option '--application' / '-a'.")
 
+    app_object = parse_application(application)
+
     if interface is None:
         try:
-            co = parse_application(application)(None, None, None)
+            co = app_object(None, None, None)
             interface = "asgi"
         except TypeError:
             interface = "wsgi"

@@ -51,20 +51,6 @@ def parse_application(value: str) -> Any:
         )
         raise click.BadParameter(message.format(import_str=value))
 
-    try:
-        module = importlib.import_module(module_str)
-    except ImportError as exc:
-        if exc.name != module_str:
-            raise exc from None
-        message = 'Could not import module "{module_str}".'
-        raise click.BadParameter(message.format(module_str=module_str))
-
-    try:
-        instance = reduce(getattr, attrs_str.split("."), module)
-    except AttributeError:
-        message = 'Attribute "{attrs_str}" not found in module "{module_str}".'
-        raise click.BadParameter(
-            message.format(attrs_str=attrs_str, module_str=module_str)
-        )
-
+    module = importlib.import_module(module_str)
+    instance = reduce(getattr, attrs_str.split("."), module)
     return instance
