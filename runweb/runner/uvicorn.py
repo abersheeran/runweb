@@ -1,11 +1,12 @@
 import multiprocessing
-
 from typing import Union
 
-from uvicorn import Server, Config
+import click
+from uvicorn import Config, Server
 
-from ..parse import parse_application, parse_bind
+from ..logging import logger
 from ..multiprocess import multiprocess
+from ..parse import parse_application, parse_bind
 
 spawn = multiprocessing.get_context("spawn")
 
@@ -19,6 +20,12 @@ def singleprocess(application: str, bind_address: str) -> None:
 def asgi(bind_address: str, application: str, workers_num: Union[int, None]) -> None:
     parse_application(application)
     parse_bind(bind_address).close()
+
+    logger.info(
+        "Binding to {}".format(
+            click.style(bind_address, fg="green", bold=True),
+        )
+    )
 
     if workers_num is None:
         singleprocess(application, bind_address)

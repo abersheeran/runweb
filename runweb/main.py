@@ -4,7 +4,6 @@ import click
 
 from .parse import parse_application
 
-
 SERVERS = {"wsgi": {}, "asgi": {}}
 
 try:

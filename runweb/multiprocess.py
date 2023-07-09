@@ -6,11 +6,13 @@ from typing import Callable
 
 import click
 
+from .logging import logger
+
 
 def multiprocess(workers_num: int, create_process: Callable[[], SpawnProcess]) -> None:
     should_exit = threading.Event()
 
-    click.echo(
+    logger.info(
         "Started parent process [{}]".format(
             click.style(str(os.getpid()), fg="cyan", bold=True)
         )
@@ -30,7 +32,7 @@ def multiprocess(workers_num: int, create_process: Callable[[], SpawnProcess]) -
         process = create_process()
         processes.append(process)
         process.start()
-        click.echo(
+        logger.info(
             "Started child process [{}]".format(
                 click.style(str(process.pid), fg="cyan", bold=True)
             )
@@ -45,7 +47,7 @@ def multiprocess(workers_num: int, create_process: Callable[[], SpawnProcess]) -
             if process.is_alive():
                 continue
 
-            click.echo(
+            logger.info(
                 "Child process [{}] died unexpectedly".format(
                     click.style(str(process.pid), fg="cyan", bold=True)
                 )
@@ -64,14 +66,14 @@ def multiprocess(workers_num: int, create_process: Callable[[], SpawnProcess]) -
             os.kill(process.pid, signal.SIGTERM)
 
     for process in processes:
-        click.echo(
+        logger.info(
             "Waiting for child process [{}] to terminate".format(
                 click.style(str(process.pid), fg="cyan", bold=True)
             )
         )
         process.join()
 
-    click.echo(
+    logger.info(
         "Stopped parent process [{}]".format(
             click.style(str(os.getpid()), fg="cyan", bold=True)
         )

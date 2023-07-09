@@ -1,7 +1,7 @@
 import importlib
+import ipaddress
 import os
 import socket
-import ipaddress
 from functools import reduce
 from typing import Any
 
