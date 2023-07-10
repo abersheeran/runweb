@@ -1,3 +1,5 @@
+import os
+import sys
 from typing import Union
 
 import click
@@ -76,6 +78,8 @@ def cli(
     autoreload: bool,
     workers_num: Union[int, None],
 ) -> None:
+    sys.path.insert(0, os.getcwd())
+
     if ctx.invoked_subcommand is not None:
         return
 
